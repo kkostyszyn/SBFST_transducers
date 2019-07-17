@@ -22,7 +22,7 @@ sigma_star = (not_b | b).optimize()
 
 #------------------
 
-repair = (not_b.star + T("b", not_b) + sigma.star).optimize()
+repair = (not_b.star + T("b", "a") + sigma.star).optimize()
 
 #------------------
 
@@ -69,7 +69,7 @@ pt2_accept.write("pt2_accept.fsa")
 
 
 #pt3
-repair_a = (not_b.star + T("a", (sigma - a| e).optimize()) + sigma.star).optimize()
+repair_a = (not_a.star + T("a", "b") + sigma.star).optimize()
 pt3_accept = (not_a.star + a + 
                 not_a.star + a + 
                 not_a.star + a + 
