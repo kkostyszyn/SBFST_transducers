@@ -19,7 +19,10 @@ def gen(fsa, accept):
         rand = R(pynini.intersect(fsa, accept), npath=num, seed=0, select="uniform", max_length=1000, weighted=False)
     return list_string_set(rand)
     
-def test(fsa, accept):
+def test(f, fsa, accept):
+    
+    t = open("results/" + f +"_results.txt", "w")
+    
     adv_list = []
     for s in gen(fsa, accept):
         try:
@@ -29,7 +32,7 @@ def test(fsa, accept):
         except:
             x = False
         
-        print(s, "|", x)
+        t.write(s +  " | " + str(x) + " \n")
     
 
 
@@ -65,14 +68,38 @@ lt0_accept = (not_b.star + b + not_b.star + b + not_b.star).optimize()
 lt0_accept.write("lt0_accept.fsa")
 
 #lt1 - bbbb
-lt1_accept = (not_b.star + b + not_b.star + b + not_b.star + b + not_b.star + b + not_b.star).optimize()
+lt1_accept = (not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star).optimize()
 lt1_accept.write("lt1_accept.fsa")
 
-#lt2, 3 seem identical to lt0? confirm 
-lt2_accept = lt0_accept
+#lt2, 5 * bb 
+lt2_accept = (not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star).optimize()
 lt2_accept.write("lt2_accept.fsa")
 
-lt3_accept = lt0_accept
+#lt3, 5 * bbbbbbbb
+eight_bs = (not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star).optimize()
+lt3_accept = (eight_bs + eight_bs + eight_bs + eight_bs + eight_bs).optimize()
 lt3_accept.write("lt3_accept.fsa")
 
 
