@@ -27,7 +27,11 @@ def test(f, fsa, accept):
     for s in gen(fsa, accept):
         try:
             #change below to repair_a if testing pt3
-            x = (pynini.compose(s, repair)).stringify()
+            if f == "pt3":
+                r = repair_a
+            else:
+                r = repair
+            x = (pynini.compose(s, r)).stringify()
             adv_list.append(x)         
         except:
             x = False
