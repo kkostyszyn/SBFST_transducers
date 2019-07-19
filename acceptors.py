@@ -2,6 +2,37 @@
 import pynini
 import functools
 
+def list_string_set(ac):
+    my_list = []
+    paths = ac.paths()
+    for s in paths.ostrings():
+        my_list.append(s)
+    my_list.sort(key=len)
+    return my_list
+    
+def gen(fsa, accept):
+    R = functools.partial(pynini.randgen)
+    loop = 10
+    n = 90
+    for i in range(loop):
+        num = int(n + n*i*0.1)
+        rand = R(pynini.intersect(fsa, accept), npath=num, seed=0, select="uniform", max_length=1000, weighted=False)
+    return list_string_set(rand)
+    
+def test(fsa, accept):
+    adv_list = []
+    for s in gen(fsa, accept):
+        try:
+            #change below to repair_a if testing pt3
+            x = (pynini.compose(s, repair)).stringify()
+            adv_list.append(x)         
+        except:
+            x = False
+        
+        print(s, "|", x)
+    
+
+
 
 A = functools.partial(pynini.acceptor)
 T = functools.partial(pynini.transducer)
@@ -23,6 +54,9 @@ sigma_star = (not_b | b).optimize()
 #------------------
 
 repair = (not_b.star + T("b", "a") + sigma.star).optimize()
+#for use with pt3
+repair_a = (not_a.star + T("a", "b") + sigma.star).optimize()
+
 
 #------------------
 
@@ -53,10 +87,10 @@ pt1_accept = (not_b.star + b +
                 not_b.star + b + 
                 not_b.star + b + 
                 not_b.star + b + 
-                not_a.star + a + 
-                not_a.star + a + 
-                not_a.star + a + 
-                not_a.star + a + pynini.intersect(not_b, not_a).star).optimize()
+                not_b.star + a + 
+                not_b.star + a + 
+                not_b.star + a + 
+                not_b.star + a + not_b.star).optimize()
 pt1_accept.write("pt1_accept.fsa")
 
 
@@ -69,7 +103,6 @@ pt2_accept.write("pt2_accept.fsa")
 
 
 #pt3
-repair_a = (not_a.star + T("a", "b") + sigma.star).optimize()
 pt3_accept = (not_a.star + a + 
                 not_a.star + a + 
                 not_a.star + a + 
@@ -79,4 +112,6 @@ pt3_accept = (not_a.star + a +
                 not_a.star + a + 
                 not_a.star + a + not_a.star).optimize()
 pt3_accept.write("pt3_accept.fsa")
+
+
 
