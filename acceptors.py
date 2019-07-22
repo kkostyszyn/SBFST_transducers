@@ -101,9 +101,8 @@ eight_bs = (not_b.star + b
             + not_b.star + b 
             + not_b.star + b 
             + not_b.star + b 
-            + not_b.star + b 
-            + not_b.star).optimize()
-lt3_accept = (eight_bs + eight_bs + eight_bs + eight_bs + eight_bs).optimize()
+            + not_b.star + b).optimize()
+lt3_accept = (eight_bs + eight_bs + eight_bs + eight_bs + eight_bs + not_b.star).optimize()
 lt3_accept.write("lt3_accept.fsa")
 
 
@@ -144,13 +143,13 @@ pt3_accept = (not_a.star + a +
                 not_a.star + a + not_a.star).optimize()
 pt3_accept.write("pt3_accept.fsa")
 
-pt1 = pynini.Fst.read("pt1.fsa")
-pt3 = pynini.Fst.read("pt3.fsa")
+#pt1 = pynini.Fst.read("pt1.fsa")
+#pt3 = pynini.Fst.read("pt3.fsa")
 #test("pt1", pt1, pt1_accept)
 #print(str(pt3))
 
+#look into pt1/pt3 arcs after repair ?
 repair_test = pynini.compose(pynini.intersect(pt1, pt1_accept), repair)
 
 x = (pynini.compose("adccdacdbaadadabbdcdaaccdccbdccdacdaadddcdddda", repair_test)).stringify()
 print(x)
-#look into pt1/pt3 arcs after repair ?
