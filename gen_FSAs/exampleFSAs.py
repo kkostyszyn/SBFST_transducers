@@ -139,6 +139,67 @@ atleast1b8 = pynini.closure(lg_containing_str(b,8), 5, 5).optimize()
 forbid6b8s = sigma4Star - pynini.closure(lg_containing_str(b,8), 6, 6).optimize()
 ltt[3] = atleast1b8 * forbid6b8s
 
-ltt[2].write("lt2.fsa")
-ltt[3].write("lt3.fsa")
+######################
+# Star-Free Examples #
+######################
+sf=dict()
 
+# every pair of 'b's has at least one 'a' in between
+cdstar = sigma4Star - (lg_containing_str(a,1) | lg_containing_str(b,1))
+cdstar.optimize()
+
+sf[0] = pynini.closure(cdstar + b + cdstar + a + cdstar + b + cdstar)
+
+# every pair of 'b's has at least one 'a' in between and every pair of 'a's has at least one 'b' in between
+
+sf[1] = sf[0] * pynini.closure(cdstar + a + cdstar + b + cdstar + a + cdstar)
+#sf1 not working?
+
+sf[2] = sf[0] * ltt[0]
+
+# every pair of 'bb's has 'aa' in between
+filler = sigma4Star - (lg_containing_str(b,2) | lg_containing_str(a,2))
+sf[3] = pynini.closure(filler + b+b + filler + a+a + filler + b+b + filler)
+
+
+####################
+# Regular Examples #
+####################
+reg=dict()
+
+evena = pynini.closure(lg_containing_ssq(a,2))
+evenb = pynini.closure(lg_containing_ssq(b,2))
+mod4a = pynini.closure(lg_containing_ssq(a,4))
+mod8a = pynini.closure(lg_containing_ssq(a,8))
+
+reg[0] = evena
+reg[1] = mod4a
+reg[2] = mod8a
+reg[3] = evena  * evenb
+reg[4] = sl[1]  * evena
+reg[5] = sp[1]  * evena
+reg[6] = lt[1]  * evena
+reg[7] = pt[1]  * evena
+reg[8] = ltt[1] * evena
+
+
+#################
+# write to file #
+#################
+#sl, sp, lt, pt, ltt, sf, reg 
+
+langs = [sl, sp, lt, pt, ltt, sf, reg]
+labels= ["sl", "sp", "lt", "pt", "ltt", "sf", "reg"]
+
+for c in range(len(langs)):
+    for ex in range(len(langs[c].values())):
+        temp = (langs[c][ex]).optimize()
+        temp.write(labels[c] + str(ex) + ".fsa")
+    
+    
+#    for example in langs[c].values():
+#        print(labels[c] + str(c))
+        #example.write(str(label[c] + c + ".fsa"))
+
+#for each example in class
+#example.write(label + ".fsa")

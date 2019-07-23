@@ -16,11 +16,11 @@ def gen(fsa, accept):
     n = 90
     for i in range(loop):
         num = int(n + n*i*0.1)
-        rand = R(pynini.intersect(fsa, accept), npath=num, seed=0, select="uniform", max_length=1000, weighted=False)
+        rand = R(pynini.intersect(fsa, accept), npath=num, seed=0, select="uniform", max_length=20, weighted=False)
     return list_string_set(rand)
     
 def test(f, fsa, accept):
-    
+    #to run test - f must be the lang code, fsa must be the actual FSA in pynini (here found in the gen_FSAs/ folder, and accept must be the acceptor as defined below
     t = open("results/" + f +"_results.txt", "w")
     
     adv_list = []
@@ -79,10 +79,12 @@ lt1_accept = (not_b.star + b
             + not_b.star).optimize()
 lt1_accept.write("lt1_accept.fsa")
 
-#lt2, 5 * bb 
-lt2_accept = (not_b.star + b 
-            + not_b.star + b 
-            + not_b.star + b 
+#lt2 - b^4 and a^4
+lt2_accept = lt1_accept
+lt2_accept.write("lt2_accept.fsa")
+
+#lt3 - if b^8 then a^8
+lt3_accept = (not_b.star + b 
             + not_b.star + b 
             + not_b.star + b 
             + not_b.star + b 
@@ -91,18 +93,6 @@ lt2_accept = (not_b.star + b
             + not_b.star + b 
             + not_b.star + b 
             + not_b.star).optimize()
-lt2_accept.write("lt2_accept.fsa")
-
-#lt3, 5 * bbbbbbbb
-eight_bs = (not_b.star + b 
-            + not_b.star + b 
-            + not_b.star + b 
-            + not_b.star + b 
-            + not_b.star + b 
-            + not_b.star + b 
-            + not_b.star + b 
-            + not_b.star + b).optimize()
-lt3_accept = (eight_bs + eight_bs + eight_bs + eight_bs + eight_bs + not_b.star).optimize()
 lt3_accept.write("lt3_accept.fsa")
 
 
@@ -143,13 +133,34 @@ pt3_accept = (not_a.star + a +
                 not_a.star + a + not_a.star).optimize()
 pt3_accept.write("pt3_accept.fsa")
 
-#pt1 = pynini.Fst.read("pt1.fsa")
-#pt3 = pynini.Fst.read("pt3.fsa")
-#test("pt1", pt1, pt1_accept)
-#print(str(pt3))
+################
+# IGNORE THESE #
+################
 
-#look into pt1/pt3 arcs after repair ?
-repair_test = pynini.compose(pynini.intersect(pt1, pt1_accept), repair)
+#these were LTT mistakenly made as LT
 
-x = (pynini.compose("adccdacdbaadadabbdcdaaccdccbdccdacdaadddcdddda", repair_test)).stringify()
-print(x)
+#ltt2, 5 * bb 
+ltt2_accept = (not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star).optimize()
+#ltt2_accept.write("ltt2_accept.fsa")
+
+#ltt3, 5 * bbbbbbbb
+eight_bs = (not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b).optimize()
+ltt3_accept = (eight_bs + eight_bs + eight_bs + eight_bs + eight_bs + not_b.star).optimize()
+#ltt3_accept.write("ltt3_accept.fsa")
