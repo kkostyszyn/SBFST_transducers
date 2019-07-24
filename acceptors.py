@@ -41,26 +41,30 @@ def test(f, fsa, accept):
             x = False
         
         t.write(s +  " | " + str(x) + " \n")
-    
 
-
+def alpha_gen(alph, e):
+    zero = (e - e).optimize()
+    sigma = zero
+    for x in list(alph):
+        sigma = A(x) | sigma
+    sigma = pynini.closure(sigma)
+    return sigma.optimize()
 
 A = functools.partial(pynini.acceptor)
 T = functools.partial(pynini.transducer)
 e = pynini.epsilon_machine()
 
 alpha = "abcd"
-zero = (e - e).optimize()
-sigma = zero
-for x in list(alpha):
-    sigma = A(x) | sigma
-sigma = pynini.closure(sigma)
+sigma = alpha_gen("abcd", e)
+not_a = alpha_gen("bcd", e)
+not_b = alpha_gen("acd", e)
+not_ab = alpha_gen("cd", e)
 sigma = sigma.optimize()
 
 b = A("b")
 a = A("a")
-not_b = (sigma - b | e).optimize()
-not_a = (sigma - a | e).optimize()
+#not_b = (sigma - b | e).optimize()
+#not_a = (sigma - a | e).optimize()
 
 #------------------
 
@@ -93,14 +97,15 @@ lt0_accept = (not_b.star + b + not_b.star + b + not_b.star).optimize()
 lt0_accept.write("lt0_accept.fsa")
 
 #lt1 - b^4 OR a^4
-bbbb = (not_b.star + b + b + b + b + not_b.star).optimize()
-aaaa = (not_a.star + a + a + a + a + not_a.star).optimize()
-lt1_accept = aaaa
+bbbb = (not_ab.star + b + b + b + b + not_ab.star).optimize()
+aaaa = (not_ab.star + a + a + a + a + not_ab.star).optimize()
+lt1_accept = pynini.union(aaaa, bbbb)
 lt1_accept.write("lt1_accept.fsa")
 
 #lt2 - b^4 AND a^4
-#use aaaa and bbbb above
-lt2_accept = (not_b.star + b + b + b + b + not_b.star).optimize()
+aaaa_2 = (not_a.star + a + a + a + a + not_a.star).optimize()
+bbbb_2 = (not_b.star + b + b + b + b + not_b.star).optimize()
+lt2_accept = (pynini.intersect(aaaa_2, bbbb_2)).optimize()
 lt2_accept.write("lt2_accept.fsa")
 
 #lt3 - if b^8 then a^8
