@@ -13,10 +13,10 @@ def list_string_set(ac):
 def gen(fsa, accept):
     R = functools.partial(pynini.randgen)
     loop = 10
-    n = 90
+    n = 100
     for i in range(loop):
         num = int(n + n*i*0.1)
-        rand = R(pynini.intersect(fsa, accept), npath=num, seed=0, select="uniform", max_length=20, weighted=False)
+        rand = R(pynini.intersect(fsa, accept), npath=num, seed=0, select="uniform", max_length=100, weighted=False)
     return list_string_set(rand)
     
 def test(f, fsa, accept):
@@ -84,14 +84,7 @@ lt2_accept = lt1_accept
 lt2_accept.write("lt2_accept.fsa")
 
 #lt3 - if b^8 then a^8
-lt3_accept = (not_b.star + b 
-            + not_b.star + b 
-            + not_b.star + b 
-            + not_b.star + b 
-            + not_b.star + b 
-            + not_b.star + b 
-            + not_b.star + b 
-            + not_b.star + b 
+lt3_accept = (not_b.star + b + b + b + b + b + b + b + b
             + not_b.star).optimize()
 lt3_accept.write("lt3_accept.fsa")
 
