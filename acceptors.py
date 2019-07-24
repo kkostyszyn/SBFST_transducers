@@ -30,9 +30,11 @@ def test(f, fsa, accept):
             if f == "pt3":
                 r = repair_a
             elif f == "lt1":
-                r = r_aaaa
+                r = r_lt1
             elif f =="lt2":
-                r = repair_lt2
+                r = r_lt2
+            elif f == "lt3":
+                r = r_lt3
             else:
                 r = repair
             x = (pynini.compose(s, r)).stringify()
@@ -63,8 +65,6 @@ sigma = sigma.optimize()
 
 b = A("b")
 a = A("a")
-#not_b = (sigma - b | e).optimize()
-#not_a = (sigma - a | e).optimize()
 
 #------------------
 
@@ -73,7 +73,7 @@ repair = (not_b.star + T("b", "a") + sigma.star).optimize()
 repair_a = (not_a.star + T("a", "b") + sigma.star).optimize()
 
 ###for use with lt1
-###when using lt1_accept = aaaa, use r_aaaa. when using lt1_accept = bbbb, use r_bbbb
+### FIX LT1 TO MATCH NEW UNION
 r_aaaa = (pynini.cdrewrite(T("a", "b"),
             "aaa", 
             "",
@@ -82,13 +82,26 @@ r_bbbb = (pynini.cdrewrite(T("b", "a"),
             "bbb",
             "",
             sigma.star)).optimize()
+r_lt1 = (pynini.union(r_aaaa, r_bbbb)).optimize()
             
 ###for use with lt2
-repair_lt2 = (pynini.cdrewrite(T("bbbb", "bbba"),
+r_lt2 = (pynini.cdrewrite(T("bbbb", "bbba"),
                 "",
                 "",
                 sigma.star)).optimize()
 
+###for use with lt3
+#delete one a - b^8, a^7
+lt3_ab = pynini.cdrewrite(T("aaaaaaaa", "aaaaaaa"),
+                        not_a,
+                        not_a,
+                        sigma)
+#add one b - b^8 and a^7 
+lt3_ba = pynini.cdrewrite(T("bbbbbbb", "bbbbbbbb"),
+                        not_b,
+                        not_b,
+                        sigma)
+r_lt3 = pynini.union(lt3_ba, lt3_ab).optimize()
 
 #------------------
 
@@ -109,8 +122,24 @@ lt2_accept = (pynini.intersect(aaaa_2, bbbb_2)).optimize()
 lt2_accept.write("lt2_accept.fsa")
 
 #lt3 - if b^8 then a^8
-lt3_accept = (not_b.star + b + b + b + b + b + b + b + b
+#FIRST - strings with b^8 and a^8
+
+b_8 = (not_b.star + b + b + b + b + b + b + b + b
+            + not_ab.star).optimize()
+a_8 = (not_a.star + a + a + a + a + a + a + a + a
+            + not_ab.star).optimize()
+b8_a8 = (pynini.intersect(b_8, a_8)).optimize()
+
+#SECOND - strings with b^7 and a^7
+b_7 = (not_b.star + b + b + b + b + b + b + b 
             + not_b.star).optimize()
+a_7 = (not_a.star + a + a + a + a + a + a + a
+            + not_a.star).optimize()
+b7_a7 = (pynini.intersect(b_7, a_7)).optimize()
+                        
+
+lt3_accept = (pynini.union(b8_a8, b7_a7)).optimize()
+
 lt3_accept.write("lt3_accept.fsa")
 
 
