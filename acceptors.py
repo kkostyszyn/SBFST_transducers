@@ -29,6 +29,10 @@ def test(f, fsa, accept):
             #change below to repair_a if testing pt3
             if f == "pt3":
                 r = repair_a
+            elif f == "lt1":
+                r = r_aaaa
+            elif f =="lt2":
+                r = repair_lt2
             else:
                 r = repair
             x = (pynini.compose(s, r)).stringify()
@@ -50,19 +54,36 @@ zero = (e - e).optimize()
 sigma = zero
 for x in list(alpha):
     sigma = A(x) | sigma
+sigma = pynini.closure(sigma)
 sigma = sigma.optimize()
 
 b = A("b")
 a = A("a")
 not_b = (sigma - b | e).optimize()
 not_a = (sigma - a | e).optimize()
-sigma_star = (not_b | b).optimize()
 
 #------------------
 
 repair = (not_b.star + T("b", "a") + sigma.star).optimize()
 #for use with pt3
 repair_a = (not_a.star + T("a", "b") + sigma.star).optimize()
+
+###for use with lt1
+###when using lt1_accept = aaaa, use r_aaaa. when using lt1_accept = bbbb, use r_bbbb
+r_aaaa = (pynini.cdrewrite(T("a", "b"),
+            "aaa", 
+            "",
+            sigma.star)).optimize()
+r_bbbb = (pynini.cdrewrite(T("b", "a"),
+            "bbb",
+            "",
+            sigma.star)).optimize()
+            
+###for use with lt2
+repair_lt2 = (pynini.cdrewrite(T("bbbb", "bbba"),
+                "",
+                "",
+                sigma.star)).optimize()
 
 
 #------------------
@@ -71,16 +92,15 @@ repair_a = (not_a.star + T("a", "b") + sigma.star).optimize()
 lt0_accept = (not_b.star + b + not_b.star + b + not_b.star).optimize()
 lt0_accept.write("lt0_accept.fsa")
 
-#lt1 - bbbb
-lt1_accept = (not_b.star + b 
-            + not_b.star + b 
-            + not_b.star + b 
-            + not_b.star + b 
-            + not_b.star).optimize()
+#lt1 - b^4 OR a^4
+bbbb = (not_b.star + b + b + b + b + not_b.star).optimize()
+aaaa = (not_a.star + a + a + a + a + not_a.star).optimize()
+lt1_accept = aaaa
 lt1_accept.write("lt1_accept.fsa")
 
-#lt2 - b^4 and a^4
-lt2_accept = lt1_accept
+#lt2 - b^4 AND a^4
+#use aaaa and bbbb above
+lt2_accept = (not_b.star + b + b + b + b + not_b.star).optimize()
 lt2_accept.write("lt2_accept.fsa")
 
 #lt3 - if b^8 then a^8
@@ -131,6 +151,14 @@ pt3_accept.write("pt3_accept.fsa")
 ################
 
 #these were LTT mistakenly made as LT
+
+#ltt1 - bbbb
+ltt1_accept = (not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star + b 
+            + not_b.star).optimize()
+ltt1_accept.write("ltt1_accept.fsa")
 
 #ltt2, 5 * bb 
 ltt2_accept = (not_b.star + b 
