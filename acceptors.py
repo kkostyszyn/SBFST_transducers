@@ -90,7 +90,7 @@ r_lt2 = (pynini.cdrewrite(T("bbbb", "bbba"),
                 "",
                 sigma.star)).optimize()
 
-###for use with lt3
+###for use with lt3 - needs fixing
 #delete one a - b^8, a^7
 lt3_ab = pynini.cdrewrite(T("aaaaaaaa", "aaaaaaa"),
                         not_a,
@@ -101,7 +101,7 @@ lt3_ba = pynini.cdrewrite(T("bbbbbbb", "bbbbbbbb"),
                         not_b,
                         not_b,
                         sigma)
-r_lt3 = pynini.union(lt3_ba, lt3_ab).optimize()
+r_lt3 = pynini.compose(lt3_ba, lt3_ab).optimize()
 
 #------------------
 
@@ -125,9 +125,9 @@ lt2_accept.write("lt2_accept.fsa")
 #FIRST - strings with b^8 and a^8
 
 b_8 = (not_b.star + b + b + b + b + b + b + b + b
-            + not_ab.star).optimize()
+            + not_b.star).optimize()
 a_8 = (not_a.star + a + a + a + a + a + a + a + a
-            + not_ab.star).optimize()
+            + not_b.star).optimize()
 b8_a8 = (pynini.intersect(b_8, a_8)).optimize()
 
 #SECOND - strings with b^7 and a^7
