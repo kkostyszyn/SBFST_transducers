@@ -82,7 +82,7 @@ r_bbbb = (pynini.cdrewrite(T("b", "a"),
             "bbb",
             "",
             sigma.star)).optimize()
-r_lt1 = (pynini.union(r_aaaa, r_bbbb)).optimize()
+r_lt1 = (pynini.compose(r_aaaa, r_bbbb)).optimize()
             
 ###for use with lt2
 r_lt2 = (pynini.cdrewrite(T("bbbb", "bbba"),
@@ -90,7 +90,7 @@ r_lt2 = (pynini.cdrewrite(T("bbbb", "bbba"),
                 "",
                 sigma.star)).optimize()
 
-###for use with lt3 - needs fixing
+###for use with lt3
 #delete one a - b^8, a^7
 lt3_ab = pynini.cdrewrite(T("aaaaaaaa", "aaaaaaa"),
                         not_a,
