@@ -121,13 +121,13 @@ bbbb_2 = (not_b.star + b + b + b + b + not_b.star).optimize()
 lt2_accept = (pynini.intersect(aaaa_2, bbbb_2)).optimize()
 lt2_accept.write("lt2_accept.fsa")
 
-#lt3 - if b^8 then a^8
+#lt3 - if b^8 then a^8 - NEEDS WORK 
 #FIRST - strings with b^8 and a^8
 
 b_8 = (not_b.star + b + b + b + b + b + b + b + b
             + not_b.star).optimize()
 a_8 = (not_a.star + a + a + a + a + a + a + a + a
-            + not_b.star).optimize()
+            + not_a.star).optimize()
 b8_a8 = (pynini.intersect(b_8, a_8)).optimize()
 
 #SECOND - strings with b^7 and a^7
