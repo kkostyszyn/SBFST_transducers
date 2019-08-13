@@ -93,15 +93,15 @@ r_lt2 = (pynini.cdrewrite(T("bbbb", "bbba"),
 ###for use with lt3
 #delete one a - b^8, a^7
 lt3_ab = pynini.cdrewrite(T("aaaaaaaa", "aaaaaaa"),
-                        not_a,
-                        not_a,
+                        (not_a | "[BOS]"),
+                        (not_a | "[EOS]"),
                         sigma)
 #add one b - b^8 and a^7 
 lt3_ba = pynini.cdrewrite(T("bbbbbbb", "bbbbbbbb"),
-                        not_b,
-                        not_b,
+                        (not_b | "[BOS]"),
+                        (not_b | "[EOS]"),
                         sigma)
-r_lt3 = pynini.compose(lt3_ba, lt3_ab).optimize()
+r_lt3 = pynini.compose(lt3_ab, lt3_ba).optimize()
 
 #------------------
 
