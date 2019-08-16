@@ -70,7 +70,9 @@ a = A("a")
 
 repair = (not_b.star + T("b", "a") + sigma.star).optimize()
 #for use with pt3
+repair.write("r.fst")
 repair_a = (not_a.star + T("a", "b") + sigma.star).optimize()
+repair_a.write("r_a.fst")
 
 ###for use with lt1
 ### FIX LT1 TO MATCH NEW UNION
@@ -83,12 +85,14 @@ r_bbbb = (pynini.cdrewrite(T("b", "a"),
             "",
             sigma.star)).optimize()
 r_lt1 = (pynini.compose(r_aaaa, r_bbbb)).optimize()
+r_lt1.write("r_lt1.fst")
             
 ###for use with lt2
 r_lt2 = (pynini.cdrewrite(T("bbbb", "bbba"),
                 "",
                 "",
                 sigma.star)).optimize()
+r_lt2.write("r_lt2.fst")
 
 ###for use with lt3
 #delete one a - b^8, a^7
@@ -102,6 +106,7 @@ lt3_ba = pynini.cdrewrite(T("bbbbbbb", "bbbbbbbb"),
                         (not_b | "[EOS]"),
                         sigma)
 r_lt3 = pynini.compose(lt3_ab, lt3_ba).optimize()
+r_lt3.write("r_lt3.fst")
 
 #------------------
 
